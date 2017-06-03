@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class queryController {
 	
-    @RequestMapping("/metriNames")
+    @RequestMapping("/metricNames")
 	public GetResponse getMetricNames(){
     	GetResponse response = null;
     	try{
@@ -32,7 +32,7 @@ public class queryController {
 		return response;
 	}
     
-    @RequestMapping("/queryMetric")
+    @RequestMapping("/DefaultMetricValues")
 	public QueryResponse getMetricValues(){
     	QueryResponse response = null;
     	QueryBuilder builder = QueryBuilder.getInstance();
