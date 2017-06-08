@@ -49,6 +49,30 @@
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.webjars/jquery -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>jquery</artifactId>
+		    <version>3.2.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>bootstrap</artifactId>
+		    <version>3.3.7-1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars/angularjs -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>angularjs</artifactId>
+		    <version>1.6.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars/d3js -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>d3js</artifactId>
+		    <version>4.2.1</version>
+		</dependency>
     </dependencies>
 </project>
 
