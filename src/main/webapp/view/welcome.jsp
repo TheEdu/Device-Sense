@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -45,31 +46,40 @@
 <body>
 	<div class="container-fluid">
 		<h1>Device Sense</h1>
-		<form action="#" method="post">		
+		<form:form modelAttribute="consulta">		
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
-					<select class="form-control" name='metric-name'>
+					<form:select path="metrica" class="form-control" name='metric-name'>
 					    <c:forEach items="${metricNames}" var="metricName">
 					       <option value="${metricName}">${metricName}</option>
 					    </c:forEach>
-					</select>
+					</form:select>
 				</div>
 				<div class="item-flex date-container">
 					<div>
 						<label>Desde</label>
-						<input type="text" id="dateFrom" class="date-time-picker">
+						<form:input path="desde" type="text" class="date-time-picker"/>
+						Hay que poner las horas relativas desde ahora (para probar 24)
 					</div>
 					<div>
 						<label>Hasta</label>
-						<input type="text" id="dateTo" class="date-time-picker">
+						<form:input path="hasta" type="text" class="date-time-picker"/>
+						 Hay que poner las horas relativas desde ahora (para probar 1)
 					</div>
 				</div>
 				<div class="item-flex">
-					<input type="submit" value="Consultar Metrica"> falta implementar xD
+					<input type="submit" value="Consultar Metrica">
 				</div>
 			</div>
-		</form>
+		</form:form>
+	</div>
+	<div>
+	<c:forEach items="${datos}" var="d">
+		Valor = ${d.getValue()}
+		TimeStamp = ${d.getTimestamp() }
+		<br>
+	</c:forEach>
 	</div>
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/jquery-ui/1.11.0/jquery-ui.js"></script>
@@ -81,9 +91,9 @@
 			showTimezone: false,
 			showTime: false,
 			showMicrosec: false,
-			showMillisec: true,
+			showMillisec: false,
 			dateFormat: "yy-mm-dd",
-			timeFormat: "hh:mm:ss.l tt"
+			timeFormat: "'T'HH-mm-ss"
 		});
 	  });
 	</script>
