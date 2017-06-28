@@ -35,17 +35,18 @@ public class WelcomeController {
 	@RequestMapping("/device")
 	public String procesarQuery(Consulta consulta, Model model) throws IOException, URISyntaxException{
 		QueryBuilder builder = QueryBuilder.getInstance();
-		builder.addMetric(consulta.getMetrica());							//Cree un objeto Consulta que tiene el nombre de la metrica
-		builder.setStart(consulta.getDesde(), TimeUnit.valueOf("DAYS"));	//y los desde y hasta. Estas lineas crean la query para Kairos
-		builder.setEnd(consulta.getHasta(), TimeUnit.valueOf("DAYS"));		//
+		builder.addMetric(consulta.getMetrica());					//Cree un objeto Consulta que tiene el nombre de la metrica
+		builder.setStart(consulta.getDesde(), TimeUnit.DAYS);	    //y los desde y hasta. Estas lineas crean la query para Kairos
+		//builder.setEnd(consulta.getHasta(), TimeUnit.DAYS));		//
 		HttpClient client = new HttpClient("http://localhost:8080");
 		QueryResponse queryResponse = client.query(builder);				//consulta al cliente con la query que armamos
 		client.shutdown();
 		
-		model.addAttribute("metricNames",metricDao.getMetricNames());		//pasa los nombres de todas las metricas a la vista
-		model.addAttribute("datos", ((queryResponse.getQueries()).get(0)).getResults().get(0).getDataPoints());	//pasa los datos a la vista
+		List<DataPoint> datos = ((queryResponse.getQueries()).get(0)).getResults().get(0).getDataPoints();
+
+		model.addAttribute("datos", datos);	//pasa los datos a la vista
 		
-		return "welcome";
+		return "tablita";		//Devuelve la vista tablita, que solo tiene la tabla que muestra los datos
 	}
 
 }

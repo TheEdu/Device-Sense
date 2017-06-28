@@ -46,7 +46,7 @@
 <body>
 	<div class="container-fluid">
 		<h1>Device Sense</h1>
-		<form:form action="/device" method="post" modelAttribute="consulta">		
+		<form:form action="/device" method="POST" id="form1" modelAttribute="consulta">		
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
@@ -74,13 +74,8 @@
 			</div>
 		</form:form>
 	</div>
-	<div>
-	<c:forEach items="${datos}" var="d">
-		Valor = ${d.getValue()}
-		TimeStamp = ${d.getTimestamp() }
-		<br>
-	</c:forEach>
-	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	<div id="div-ajax">
+
 	</div>
 	
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
@@ -90,6 +85,24 @@
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
 	<script type="text/javascript" src="webjars/highcharts/4.0.4/highcharts-all.js"></script>
+	
+	<script type="text/javascript">
+ 		var form = $('#form1');
+		form.submit(function () {	<%-- La funcion llama al metodo procesarQuery y mete la respuesta en el div-ajax --%>
+		 
+		$.ajax({
+		type: form.attr('method'),				
+		url: form.attr('action'),
+		data: form.serialize(),
+		success: function (data) {
+			$("#div-ajax").html(data);
+		 
+		}
+		});
+		 
+		return false;
+		});
+	</script>
 	
 </body>
 </html>
