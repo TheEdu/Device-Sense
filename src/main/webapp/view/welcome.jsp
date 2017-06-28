@@ -46,7 +46,7 @@
 <body>
 	<div class="container-fluid">
 		<h1>Device Sense</h1>
-		<form:form modelAttribute="consulta">		
+		<form:form action="/device" method="post" modelAttribute="consulta">		
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
@@ -69,7 +69,7 @@
 					</div>
 				</div>
 				<div class="item-flex">
-					<input type="submit" value="Consultar Metrica">
+					<input type="submit" id="button_1" value="Consultar Metrica">
 				</div>
 			</div>
 		</form:form>
@@ -80,22 +80,17 @@
 		TimeStamp = ${d.getTimestamp() }
 		<br>
 	</c:forEach>
+	<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	</div>
+	
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/jquery-ui/1.11.0/jquery-ui.js"></script>
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-sliderAccess.js"></script>
-	<script>
-	  $( function() {
-		$(".date-time-picker").datetimepicker({
-			showTimezone: false,
-			showTime: false,
-			showMicrosec: false,
-			showMillisec: false,
-			dateFormat: "yy-mm-dd",
-			timeFormat: "'T'HH-mm-ss"
-		});
-	  });
-	</script>
+	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
+	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
+	<script type="text/javascript" src="webjars/highcharts/4.0.4/highcharts-all.js"></script>
+	
 </body>
 </html>
+

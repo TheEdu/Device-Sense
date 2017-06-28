@@ -1,5 +1,8 @@
 package com.springBoot.project.controller;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public class Consulta {
 	
 	private String metrica;
