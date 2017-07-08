@@ -22,8 +22,8 @@
 	      <c:forEach items="${datos}" var="d"> 
    
 	       <tr>
-	        <td><c:out value="${d.getValue()}"/></td>      
-	        <td>${Date(Long.parseLong(d.getTimestamp()))}</td>               
+	        <td><c:out value="${d.value}"/></td>      
+	        <td>${Date(Long.parseLong(d.timestamp))}</td>          
 	      </tr> 
 	    </c:forEach> 
 	  </tbody>

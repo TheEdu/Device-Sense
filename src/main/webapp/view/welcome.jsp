@@ -50,7 +50,7 @@
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
-					<form:select path="metrica" class="form-control" name='metric-name'>
+					<form:select id="select-metricas" path="metrica" class="form-control" name='metric-name'>
 					    <c:forEach items="${metricNames}" var="metricName">
 					       <option value="${metricName}">${metricName}</option>
 					    </c:forEach>
@@ -72,11 +72,27 @@
 					<input type="submit" id="button_1" value="Consultar Metrica">
 				</div>
 			</div>
+
+		</form:form>
+		
+		<h2>Crear Metrica</h2>
+		<form:form action="/datosRandom" method="POST" id="form2" modelAttribute="consulta">
+			<div class="form-container">
+				<div class="item-flex">
+					<label>Nombre</label>
+					<div>
+						<form:input path="metrica" type="text" class="form-control"/>
+					</div>
+					<div class="item-flex">
+						<input type="submit" id="button_2" value="Crear Metrica">
+					</div>
+				</div>
+			</div>
+		
 		</form:form>
 	</div>
-	<div id="div-ajax">
 
-	</div>
+	<div id="div-ajax"></div>
 	
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/jquery-ui/1.11.0/jquery-ui.js"></script>
@@ -85,6 +101,7 @@
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
 	<script type="text/javascript" src="webjars/highcharts/4.0.4/highcharts-all.js"></script>
+	
 	
 	<script type="text/javascript">
  		var form = $('#form1');
@@ -96,13 +113,16 @@
 		data: form.serialize(),
 		success: function (data) {
 			$("#div-ajax").html(data);
-		 
 		}
 		});
 		 
 		return false;
 		});
 	</script>
+	
+
+
+	
 	
 </body>
 </html>

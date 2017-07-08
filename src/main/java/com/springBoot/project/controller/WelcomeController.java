@@ -3,6 +3,7 @@ package com.springBoot.project.controller;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import org.kairosdb.client.HttpClient;
 import org.kairosdb.client.builder.*;
@@ -47,6 +48,28 @@ public class WelcomeController {
 		model.addAttribute("datos", datos);	//pasa los datos a la vista
 		
 		return "tablita";		//Devuelve la vista tablita, que solo tiene la tabla que muestra los datos
+	}
+	
+	
+	@RequestMapping("/datosRandom")
+	public void agregarDatosRandom(Consulta consulta,Model model) throws URISyntaxException, IOException, InterruptedException{
+		
+		MetricBuilder builder = MetricBuilder.getInstance();
+
+		for(int i=1;i<=10;i++){
+			builder.addMetric(consulta.getMetrica())
+				.addTag("host", "server1")
+				.addTag("customer", "Acme")
+				.addDataPoint(System.currentTimeMillis(), Math.floor((Math.random()*100)));
+			Thread.sleep(5);
+		}
+		HttpClient client = new HttpClient("http://localhost:8080");
+		//Response response = client.pushMetrics(builder);
+		client.pushMetrics(builder);
+		client.shutdown();
+		//model.addAttribute("metricNames",metricDao.getMetricNames());
+		//return "welcome";
+		
 	}
 
 }
