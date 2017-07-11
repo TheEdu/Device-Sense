@@ -39,6 +39,27 @@
 			align-items:flex-start;
 		}
 		
+		body {
+			font: 10px sans-serif;
+		}
+		
+		.axis path,
+		.axis line {
+		  	fill: none;
+		  	stroke: #000;
+		 	shape-rendering: crispEdges;
+		}
+		
+		.x.axis path {
+		  	display: none;
+		}
+		
+		.line {
+		  	fill: none;
+		  	stroke: steelblue;
+		  	stroke-width: 1.5px;
+		}
+		
 	</style>
 	
 	<title>Device Sense</title>
@@ -46,7 +67,7 @@
 <body>
 	<div class="container-fluid">
 		<h1>Device Sense</h1>
-		<form:form action="/device" method="POST" id="form1" modelAttribute="consulta">		
+		<form:form action="/test" method="POST" id="form1" modelAttribute="consulta">		
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
@@ -91,8 +112,6 @@
 		
 		</form:form>
 	</div>
-
-	<div id="div-ajax"></div>
 	
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/jquery-ui/1.11.0/jquery-ui.js"></script>
@@ -100,23 +119,83 @@
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-sliderAccess.js"></script>
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
-	<script type="text/javascript" src="webjars/highcharts/4.0.4/highcharts-all.js"></script>
-	
 	
 	<script type="text/javascript">
+	
  		var form = $('#form1');
-		form.submit(function () {	<%-- La funcion llama al metodo procesarQuery y mete la respuesta en el div-ajax --%>
-		 
-		$.ajax({
-		type: form.attr('method'),				
-		url: form.attr('action'),
-		data: form.serialize(),
-		success: function (data) {
-			$("#div-ajax").html(data);
-		}
-		});
-		 
-		return false;
+		form.submit(function (event) {	<%-- La funcion llama al metodo procesarQuery y mete la respuesta en el div-ajax --%>	 
+			alert("Hola AJAX");
+			event.preventDefault();
+			$.ajax({
+		        type: form.attr('method'),
+		        url: form.attr('action'),
+		        data: form.serialize(),
+		        success: function (kairosData) {
+		        	alert("Success");
+		           	     
+		            var margin = {top: 20, right: 20, bottom: 30, left: 50},
+		                width = 960 - margin.left - margin.right,
+		                height = 500 - margin.top - margin.bottom;
+
+		            var x = d3.scaleTime()
+		                .range([0, width])
+
+		            var y = d3.scaleLinear()
+		                .range([height, 0]);
+
+		            var line = d3.line()
+		                .x(function(d) { return x(d.date); })
+		                .y(function(d) { return y(d.close); });
+
+		            var svg = d3.select("body").append("svg")
+		                .attr("width", width + margin.left + margin.right)
+		                .attr("height", height + margin.top + margin.bottom)
+		              .append("g")
+		                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		              var data = kairosData.map(function(d) {
+		                  return {
+		                     date: new Date(d.timestamp),
+		                     close: d.value
+		                  };
+		                  
+		              });
+
+		              console.log(data);
+
+
+		              x.domain(d3.extent(data, function(d) { return d.date; }));
+		              y.domain(d3.extent(data, function(d) { return d.close; }));
+
+		              svg.append("g")
+		                  .attr("class", "x axis")
+		                  .attr("transform", "translate(0," + height + ")")
+		                  .call(d3.axisBottom(x));
+
+		              svg.append("g")
+		                  .attr("class", "y axis")
+		                  .call(d3.axisLeft(y))
+		                .append("text")
+		                  .attr("transform", "rotate(-90)")
+		                  .attr("y", 6)
+		                  .attr("dy", ".71em")
+		                  .style("text-anchor", "end")
+		                  .text("Price ($)");
+
+		              svg.append("path")
+		                  .datum(data)
+		                  .attr("class", "line")
+		                  .attr("d", line);
+	
+		        },
+		        error: function (e) {
+					alert("error");
+		            console.log("ERROR : ", e);
+		            $("#btn-search").prop("disabled", false);
+	
+		        }
+		    });
+			return false;
 		});
 	</script>
 	

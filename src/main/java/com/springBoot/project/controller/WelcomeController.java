@@ -1,9 +1,12 @@
 package com.springBoot.project.controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import org.kairosdb.client.HttpClient;
 import org.kairosdb.client.builder.*;
@@ -11,6 +14,8 @@ import org.kairosdb.client.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -71,5 +76,27 @@ public class WelcomeController {
 		//return "welcome";
 		
 	}
+	
+	
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
+	public @ResponseBody
+	List<DataPoint>  test(Consulta consulta) throws URISyntaxException, IOException{
+		
+		QueryBuilder builder = QueryBuilder.getInstance();
+		builder.addMetric(consulta.getMetrica());					
+		builder.setStart(consulta.getDesde(), TimeUnit.DAYS);
+		HttpClient client = null;
+		client = new HttpClient("http://localhost:8080");
+		QueryResponse queryResponse;	
+		queryResponse = client.query(builder);
+		client.shutdown();
+		List<DataPoint> datos = ((queryResponse.getQueries()).get(0)).getResults().get(0).getDataPoints();
+		for (DataPoint dataPoint : datos) {
+			System.out.println(dataPoint.getTimestamp());
+		}
+		return datos;
+		
+		
+		}
 
 }

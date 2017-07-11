@@ -2,7 +2,10 @@ package com.springBoot.project.controller;
 
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Repository
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Consulta {
 	
 	private String metrica;
