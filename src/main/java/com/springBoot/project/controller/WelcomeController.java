@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.springBoot.project.dao.MetricDao;
+import com.springBoot.project.repository.Consulta;
 
 @Controller
 @RequestMapping("/")
@@ -34,30 +35,21 @@ public class WelcomeController {
 	@RequestMapping("/")
 	public String Welcome(Model model){
     	model.addAttribute("metricNames",metricDao.getMetricNames());
+    	consulta.setDesde(24);
+    	consulta.setHasta(1);
     	model.addAttribute("consulta", consulta);
 		return "welcome";
 	}
 	
-	@RequestMapping("/device")
-	public String procesarQuery(Consulta consulta, Model model) throws IOException, URISyntaxException{
-		QueryBuilder builder = QueryBuilder.getInstance();
-		builder.addMetric(consulta.getMetrica());					//Cree un objeto Consulta que tiene el nombre de la metrica
-		builder.setStart(consulta.getDesde(), TimeUnit.DAYS);	    //y los desde y hasta. Estas lineas crean la query para Kairos
-		//builder.setEnd(consulta.getHasta(), TimeUnit.DAYS));		//
-		HttpClient client = new HttpClient("http://localhost:8080");
-		QueryResponse queryResponse = client.query(builder);				//consulta al cliente con la query que armamos
-		client.shutdown();
-		
-		List<DataPoint> datos = ((queryResponse.getQueries()).get(0)).getResults().get(0).getDataPoints();
-
-		model.addAttribute("datos", datos);	//pasa los datos a la vista
-		
-		return "tablita";		//Devuelve la vista tablita, que solo tiene la tabla que muestra los datos
+	@RequestMapping("/create-metric")
+	public String Create(Model model){
+		model.addAttribute("consulta", consulta);
+		return "create-metric";
 	}
 	
 	
 	@RequestMapping("/datosRandom")
-	public void agregarDatosRandom(Consulta consulta,Model model) throws URISyntaxException, IOException, InterruptedException{
+	public String agregarDatosRandom(Consulta consulta,Model model) throws URISyntaxException, IOException, InterruptedException{
 		
 		MetricBuilder builder = MetricBuilder.getInstance();
 
@@ -74,11 +66,12 @@ public class WelcomeController {
 		client.shutdown();
 		//model.addAttribute("metricNames",metricDao.getMetricNames());
 		//return "welcome";
+		return Welcome(model);
 		
 	}
 	
 	
-	@RequestMapping(value = "/test", method = RequestMethod.POST)
+	@RequestMapping(value = "/d3-graphic", method = RequestMethod.POST)
 	public @ResponseBody
 	List<DataPoint>  test(Consulta consulta) throws URISyntaxException, IOException{
 		
@@ -91,9 +84,6 @@ public class WelcomeController {
 		queryResponse = client.query(builder);
 		client.shutdown();
 		List<DataPoint> datos = ((queryResponse.getQueries()).get(0)).getResults().get(0).getDataPoints();
-		for (DataPoint dataPoint : datos) {
-			System.out.println(dataPoint.getTimestamp());
-		}
 		return datos;
 		
 		

@@ -9,6 +9,7 @@
 	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7-1/css/bootstrap.min.css"/>
 	<link rel="stylesheet" type="text/css" href="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-timepicker-addon.min.css"/>
 	<link rel="stylesheet" type="text/css" href="webjars/jquery-ui/1.11.0/jquery-ui.css"/>
+	<link rel="stylesheet" type="text/css" href="webjars/metrics-graphics/2.11.0/dist/metricsgraphics.css"/>
 	<style type="text/css">
 		label{
 			display:block;
@@ -38,11 +39,7 @@
 			justify-content: space-between;
 			align-items:flex-start;
 		}
-		
-		body {
-			font: 10px sans-serif;
-		}
-		
+	
 		.axis path,
 		.axis line {
 		  	fill: none;
@@ -67,7 +64,7 @@
 <body>
 	<div class="container-fluid">
 		<h1>Device Sense</h1>
-		<form:form action="/test" method="POST" id="form1" modelAttribute="consulta">		
+		<form:form action="/d3-graphic" method="POST" id="form1" modelAttribute="consulta">		
 			<div class="form-container">
 				<div class="item-flex">
 					<label>Seleccione una Metrica:</label>
@@ -92,25 +89,17 @@
 				<div class="item-flex">
 					<input type="submit" id="button_1" value="Consultar Metrica">
 				</div>
-			</div>
-
-		</form:form>
-		
-		<h2>Crear Metrica</h2>
-		<form:form action="/datosRandom" method="POST" id="form2" modelAttribute="consulta">
-			<div class="form-container">
 				<div class="item-flex">
-					<label>Nombre</label>
-					<div>
-						<form:input path="metrica" type="text" class="form-control"/>
-					</div>
-					<div class="item-flex">
-						<input type="submit" id="button_2" value="Crear Metrica">
-					</div>
+					<a href="/create-metric">
+					   <input type="button" value="Crear Metrica" />
+					</a>
 				</div>
+				
 			</div>
-		
 		</form:form>
+		
+		<div id="testMG">
+		</div>
 	</div>
 	
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
@@ -118,24 +107,24 @@
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-sliderAccess.js"></script>
 	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
-	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
+	<script type="text/javascript" src="webjars/metrics-graphics/2.11.0/dist/metricsgraphics.js"></script>
 	
 	<script type="text/javascript">
 	
- 		var form = $('#form1');
-		form.submit(function (event) {	<%-- La funcion llama al metodo procesarQuery y mete la respuesta en el div-ajax --%>	 
-			alert("Hola AJAX");
+		var form = $('#form1');
+		/*
+		form.submit(function (event) {
 			event.preventDefault();
 			$.ajax({
 		        type: form.attr('method'),
-		        url: form.attr('action'),
+		        url:  form.attr('action'),
 		        data: form.serialize(),
 		        success: function (kairosData) {
 		        	alert("Success");
 		           	     
 		            var margin = {top: 20, right: 20, bottom: 30, left: 50},
-		                width = 960 - margin.left - margin.right,
-		                height = 500 - margin.top - margin.bottom;
+		                width = 700 - margin.left - margin.right,
+		                height = 300 - margin.top - margin.bottom;
 
 		            var x = d3.scaleTime()
 		                .range([0, width])
@@ -160,9 +149,6 @@
 		                  };
 		                  
 		              });
-
-		              console.log(data);
-
 
 		              x.domain(d3.extent(data, function(d) { return d.date; }));
 		              y.domain(d3.extent(data, function(d) { return d.close; }));
@@ -195,7 +181,42 @@
 	
 		        }
 		    });
-			return false;
+		});
+ 		*/		
+ 		form.submit(function (event) {
+			event.preventDefault();
+			$.ajax({
+		        type: form.attr('method'),
+		        url:  form.attr('action'),
+		        data: form.serialize(),
+		        success: function (kairosData) {
+		        	alert("Success");
+		        	var data = kairosData.map(function(d) {
+		        		return {
+		                     date: new Date(d.timestamp),
+		                     value: d.value
+		                  };
+	                  });
+		        	
+					MG.data_graphic({
+					    title: $("#select-metricas").val(),
+					    description: "This is a simple line chart. You can remove the area portion by adding area: false to the arguments list.",
+					    data: data,
+					    width: 600,
+					    height: 200,
+					    right: 40,
+					    target: document.getElementById('testMG'),
+					    x_accessor: 'date',
+					    y_accessor: 'value'
+					});	
+		        },
+		        error: function (e) {
+					alert("error");
+		            console.log("ERROR : ", e);
+		            $("#btn-search").prop("disabled", false);
+	
+		        }
+		    });
 		});
 	</script>
 	
