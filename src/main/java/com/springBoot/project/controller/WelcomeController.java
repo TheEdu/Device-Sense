@@ -35,7 +35,7 @@ public class WelcomeController {
 	@RequestMapping("/")
 	public String Welcome(Model model){
     	model.addAttribute("metricNames",metricDao.getMetricNames());
-    	consulta.setDesde(24);
+    	consulta.setDesde(200);
     	consulta.setHasta(1);
     	model.addAttribute("consulta", consulta);
 		return "welcome";
@@ -60,7 +60,7 @@ public class WelcomeController {
 				.addDataPoint(System.currentTimeMillis(), Math.floor((Math.random()*100)));
 			Thread.sleep(5);
 		}
-		HttpClient client = new HttpClient("http://localhost:8080");
+		HttpClient client = new HttpClient("http://localhost:8090");
 		//Response response = client.pushMetrics(builder);
 		client.pushMetrics(builder);
 		client.shutdown();
@@ -79,7 +79,7 @@ public class WelcomeController {
 		builder.addMetric(consulta.getMetrica());					
 		builder.setStart(consulta.getDesde(), TimeUnit.DAYS);
 		HttpClient client = null;
-		client = new HttpClient("http://localhost:8080");
+		client = new HttpClient("http://localhost:8090");
 		QueryResponse queryResponse;	
 		queryResponse = client.query(builder);
 		client.shutdown();

@@ -90,6 +90,14 @@
 		    <artifactId>jQuery-Timepicker-Addon</artifactId>
 		    <version>1.4.5</version>
 		</dependency>
+		<!-- H2 Database -->
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+			<dependency>
+			    <groupId>com.h2database</groupId>
+			    <artifactId>h2</artifactId>
+			    <version>1.4.193</version>
+			    <scope>test</scope>
+			</dependency>
     </dependencies>
 </project>
 

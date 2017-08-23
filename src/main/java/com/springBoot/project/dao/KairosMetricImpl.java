@@ -16,7 +16,7 @@ public class KairosMetricImpl implements MetricDao {
 	public List<String> getMetricNames() {
 		List<String> result = null;
     	try{
-	    	HttpClient client = new HttpClient("http://localhost:8080");
+	    	HttpClient client = new HttpClient("http://localhost:8090");
 	    	result = client.getMetricNames().getResults();
 	    	client.shutdown();
     	} catch(Exception e){
@@ -34,7 +34,7 @@ public class KairosMetricImpl implements MetricDao {
     	       .addAggregator(AggregatorFactory.createSumAggregator(1, TimeUnit.MILLISECONDS));
     	
     	try{
-    		HttpClient client = new HttpClient("http://localhost:8080");
+    		HttpClient client = new HttpClient("http://localhost:8090");
     		response = client.query(builder);
     		client.shutdown();
     	} catch (Exception e){

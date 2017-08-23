@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -57,8 +57,22 @@
 		  	stroke-width: 1.5px;
 		}
 		
-	</style>
+
+
+		.area {
+		  fill: steelblue;
+		  clip-path: url(#clip);
+		}
+		
+		.zoom {
+		  cursor: move;
+		  fill: none;
+		  pointer-events: all;
+		}
+		
 	
+	</style>
+	<meta charset="utf-8">
 	<title>Device Sense</title>
 </head>
 <body>
@@ -100,14 +114,23 @@
 		
 		<div id="testMG">
 		</div>
+		
+		<svg width="960" height="500"></svg>
+		
 	</div>
 	
+
 	<script type="text/javascript" src="webjars/jquery/3.2.1/jquery.min.js"></script>
 	<script type="text/javascript" src="webjars/jquery-ui/1.11.0/jquery-ui.js"></script>
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 	<script type="text/javascript" src="webjars/jQuery-Timepicker-Addon/1.4.5/jquery-ui-sliderAccess.js"></script>
-	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script>
+	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.js"></script> 
+	<script type="text/javascript" src="webjars/d3js/4.2.1/d3.min.js"></script>
 	<script type="text/javascript" src="webjars/metrics-graphics/2.11.0/dist/metricsgraphics.js"></script>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+	<script type="text/javascript" src="webjars/d3/4.9.1/d3.min.js"></script> 
 	
 	<script type="text/javascript">
 	
@@ -183,7 +206,7 @@
 		    });
 		});
  		*/		
- 		form.submit(function (event) {
+ 		/*form.submit(function (event) {
 			event.preventDefault();
 			$.ajax({
 		        type: form.attr('method'),
@@ -202,8 +225,9 @@
 					    title: $("#select-metricas").val(),
 					    description: "This is a simple line chart. You can remove the area portion by adding area: false to the arguments list.",
 					    data: data,
-					    width: 600,
-					    height: 200,
+					    width: 1000,
+					    height: 400,
+					    animate_on_load: true,
 					    right: 40,
 					    target: document.getElementById('testMG'),
 					    x_accessor: 'date',
@@ -217,7 +241,232 @@
 	
 		        }
 		    });
+		});*/
+		
+ 		/*form.submit(function (event) {
+			event.preventDefault();
+			$.ajax({
+		        type: form.attr('method'),
+		        url:  form.attr('action'),
+		        data: form.serialize(),
+		        success: function (kairosData) {
+		        	alert("Success");
+		        	var data = kairosData.map(function(d) {
+		        		return {
+		                     x: d.timestamp,
+		                     y: d.value
+		                  };
+	                  });
+		        	
+		        	
+		        	Highcharts.chart('testMG', {
+		                chart: {
+		                    zoomType: 'x'
+		                },
+		                title: {
+		                    text: $("#select-metricas").val()
+		                },
+		                subtitle: {
+		                    text: document.ontouchstart === undefined ?
+		                            'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
+		                },
+		                xAxis: {
+		                    type: 'datetime'
+		                },
+		                yAxis: {
+		                    title: {
+		                        text: 'Value'
+		                    }
+		                },
+		                legend: {
+		                    enabled: false
+		                },
+		                plotOptions: {
+		                    area: {
+		                        fillColor: {
+		                            linearGradient: {
+		                                x1: 0,
+		                                y1: 0,
+		                                x2: 0,
+		                                y2: 1
+		                            },
+		                            stops: [
+		                                [0, Highcharts.getOptions().colors[0]],
+		                                [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+		                            ]
+		                        },
+		                        marker: {
+		                            radius: 2
+		                        },
+		                        lineWidth: 1,
+		                        states: {
+		                            hover: {
+		                                lineWidth: 1
+		                            }
+		                        },
+		                        threshold: null
+		                    }
+		                },
+
+		                series: [{
+		                    type: 'area',
+		                    name: 'Value',
+		                    data: data
+		                }]
+		            });
+		        },
+		        error: function (e) {
+					alert("error");
+		            console.log("ERROR : ", e);
+		            $("#btn-search").prop("disabled", false);
+	
+		        }
+		    });
+		});*/
+		
+		
+ 		form.submit(function (event) {
+			event.preventDefault();
+			$("svg").empty();
+			$.ajax({
+		        type: form.attr('method'),
+		        url:  form.attr('action'),
+		        data: form.serialize(),
+		        success: function (kairosData) {
+
+		        	alert("Success");
+			        var svg = d3.select("svg"),
+			            margin = {top: 20, right: 20, bottom: 110, left: 40},
+			            margin2 = {top: 430, right: 20, bottom: 30, left: 40},
+			            width = +svg.attr("width") - margin.left - margin.right,
+			            height = +svg.attr("height") - margin.top - margin.bottom,
+			            height2 = +svg.attr("height") - margin2.top - margin2.bottom;
+		
+			        var x = d3.scaleTime().range([0, width]),
+			            x2 = d3.scaleTime().range([0, width]),
+			            y = d3.scaleLinear().range([height, 0]),
+			            y2 = d3.scaleLinear().range([height2, 0]);
+		
+			        var xAxis = d3.axisBottom(x),
+			            xAxis2 = d3.axisBottom(x2),
+			            yAxis = d3.axisLeft(y);
+		
+			        var brush = d3.brushX()
+			            .extent([[0, 0], [width, height2]])
+			            .on("brush end", brushed);
+		
+			        var zoom = d3.zoom()
+			            .scaleExtent([1, Infinity])
+			            .translateExtent([[0, 0], [width, height]])
+			            .extent([[0, 0], [width, height]])
+			            .on("zoom", zoomed);
+		
+			        var area = d3.area()
+			            //.curve(d3.curveMonotoneX)
+			            .x(function(d) { return x(d.date); })
+			            .y0(height)
+			            .y1(function(d) { return y(d.price); });
+		
+			        var area2 = d3.area()
+			            //.curve(d3.curveMonotoneX)
+			            .x(function(d) { return x2(d.date); })
+			            .y0(height2)
+			            .y1(function(d) { return y2(d.price); });
+		
+			        svg.append("defs").append("clipPath")
+			            .attr("id", "clip")
+			          .append("rect")
+			            .attr("width", width)
+			            .attr("height", height);
+		
+			        var focus = svg.append("g")
+			            .attr("class", "focus")
+			            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		
+			        var context = svg.append("g")
+			            .attr("class", "context")
+			            .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+			        	
+			        var data = kairosData.map(function(d) {
+			        		return {
+			                     date: new Date(d.timestamp),
+			                     price: d.value
+			                  };
+		                  });
+		        
+					x.domain(d3.extent(data, function(d) { return d.date; }));
+					y.domain([0, d3.max(data, function(d) { return d.price; })]);
+					x2.domain(x.domain());
+					y2.domain(y.domain());
+					
+					focus.append("path")
+					    .datum(data)
+					    .attr("class", "area")
+					    .attr("d", area);
+					
+					focus.append("g")
+					    .attr("class", "axis axis--x")
+					    .attr("transform", "translate(0," + height + ")")
+					    .call(xAxis);
+					
+					focus.append("g")
+					    .attr("class", "axis axis--y")
+					    .call(yAxis);
+					
+					context.append("path")
+					    .datum(data)
+					    .attr("class", "area")
+					    .attr("d", area2);
+					
+					context.append("g")
+					    .attr("class", "axis axis--x")
+					    .attr("transform", "translate(0," + height2 + ")")
+					    .call(xAxis2);
+
+					context.append("g")
+					    .attr("class", "brush")
+					    .call(brush)
+					    .call(brush.move, x.range());
+					
+					svg.append("rect")
+					    .attr("class", "zoom")
+					    .attr("width", width)
+					    .attr("height", height)
+					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+					    .call(zoom);
+					
+				
+					 function brushed() {
+						if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
+						var s = d3.event.selection || x2.range();
+						x.domain(s.map(x2.invert, x2));
+						focus.select(".area").attr("d", area);
+						focus.select(".axis--x").call(xAxis);
+						svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+						    .scale(width / (s[1] - s[0]))
+						    .translate(-s[0], 0));
+					}
+					
+					function zoomed() {
+						if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+						var t = d3.event.transform;
+						x.domain(t.rescaleX(x2).domain());
+						focus.select(".area").attr("d", area);
+						focus.select(".axis--x").call(xAxis);
+						context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+					}
+
+		        },
+		        error: function (e) {
+					alert("error");
+		            console.log("ERROR : ", e);
+		            $("#btn-search").prop("disabled", false);
+	
+		        }
+		    });
 		});
+		
+		
 	</script>
 	
 
